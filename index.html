@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programme Salé — 6 kg en 2 mois</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f1e8;
+    --surface: #ffffff;
+    --card: #fffdf8;
+    --border: #ddd3bd;
+    --accent: #6b7f4f;
+    --accent2: #a45c3f;
+    --warn: #c48a2e;
+    --muted: #9c927a;
+    --text: #2e2a1f;
+    --text2: #6e6650;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Work Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  .hero {
+    position: relative;
+    padding: 56px 24px 36px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(107,127,79,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 7vw, 3.3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  h1 span { color: var(--accent); font-style: italic; }
+  .hero-sub {
+    margin-top: 14px;
+    color: var(--text2);
+    font-size: 1rem;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .stats {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 22px;
+    text-align: center;
+    min-width: 100px;
+    flex: 1;
+    max-width: 160px;
+  }
+  .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    margin-bottom: 26px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    justify-content: center;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab:first-child { border-radius: 10px 0 0 10px; }
+  .tab:last-child  { border-radius: 0 10px 10px 0; }
+  .tab:not(:last-child) { border-right: none; }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fffdf8;
+  }
+  .tab:hover:not(.active) { background: #ede5d2; }
+
+  .content { padding: 0 20px 60px; max-width: 900px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 14px;
+    margin-top: 30px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .week {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .week-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .week-header:hover { background: #f0e9d8; }
+  .week-label { display: flex; align-items: center; gap: 14px; }
+  .week-num {
+    background: #e8e0c9;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .week-title { font-weight: 600; font-size: 1rem; }
+  .week-goal { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .week-arrow { color: var(--muted); font-size: 16px; transition: transform 0.3s; }
+  .week.open .week-arrow { transform: rotate(180deg); }
+  .week-body { display: none; padding: 0 22px 20px; border-top: 1px solid var(--border); }
+  .week.open .week-body { display: block; }
+
+  .meal-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+  .meal-row { display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: start; }
+  .meal-time { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 0.5px; padding-top: 2px; }
+  .meal-content { font-size: 14px; color: var(--text); line-height: 1.55; }
+  .meal-content strong { color: var(--accent2); font-weight: 600; }
+  .kcal-tag {
+    display: inline-block;
+    background: #eef1e2;
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+
+  .tip-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+  }
+  .tip-card.soft { border-left-color: var(--accent2); }
+  .tip-card.warn { border-left-color: var(--warn); }
+  .tip-icon { font-size: 1.3rem; margin-bottom: 6px; }
+  .tip-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .tip-body { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+  .sport-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+  .sport-day { font-size: 11px; color: var(--accent); font-weight: 700; min-width: 80px; padding-top: 3px; }
+  .sport-desc { font-size: 14px; line-height: 1.55; }
+  .tag {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px; margin-right: 4px;
+  }
+  .tag-force { background: #f3e0d8; color: #a45c3f; }
+  .tag-cardio { background: #dde6d0; color: #5c7440; }
+  .tag-recup  { background: #ece7dc; color: #8c7f66; }
+
+  .divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+  .check-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .check-item:last-child { border: none; }
+  .chk { font-size: 15px; min-width: 22px; }
+  .chk-text { font-size: 14px; line-height: 1.5; }
+  .chk-text em { color: var(--text2); font-style: normal; font-size: 12px; }
+
+  .swap-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+  .swap-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .swap-out { color: var(--warn); text-decoration: line-through; }
+  .swap-arrow { color: var(--muted); font-size: 14px; }
+  .swap-in { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Programme 8 semaines · Salé & sans sucre</div>
+  <h1>−6 kg en <span>2 mois</span><br>version salée</h1>
+  <p class="hero-sub">Zéro sucré au menu (pas de fruits rouges, pas de desserts) : yaourt grec nature, fruits classiques, amandes, et des repas salés à chaque fois.</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-val">~1900</div><div class="stat-lbl">kcal/jour</div></div>
+  <div class="stat"><div class="stat-val">−600</div><div class="stat-lbl">déficit/jour</div></div>
+  <div class="stat"><div class="stat-val">0.75kg</div><div class="stat-lbl">par semaine</div></div>
+  <div class="stat"><div class="stat-val">8</div><div class="stat-lbl">semaines</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('nutrition')">🧂 Nutrition</button>
+  <button class="tab" onclick="showPanel('sport')">💪 Sport</button>
+  <button class="tab" onclick="showPanel('regles')">📋 Règles</button>
+  <button class="tab" onclick="showPanel('suivi')">📈 Suivi</button>
+  <button class="tab" onclick="showPanel('courses')">🛒 Courses</button>
+</div>
+
+<div class="content">
+
+  <!-- NUTRITION -->
+  <div class="panel active" id="nutrition">
+    <p class="section-title">Le calcul</p>
+    <div class="tip-card">
+      <div class="tip-icon">📐</div>
+      <div class="tip-title">6 kg en 8 semaines = 0.75 kg/semaine</div>
+      <div class="tip-body">Objectif réaliste et tenable avec un déficit d'environ <strong style="color:var(--accent)">600 kcal/jour</strong>, soit environ <strong style="color:var(--accent)">1900 kcal/jour</strong> pour ton profil actif. Combiné au sport, c'est un rythme soutenu mais sûr — sans passer sous les 1800 kcal pour préserver le muscle et l'énergie.</div>
+    </div>
+
+    <p class="section-title">Ta base : le salé, pas le sucré</p>
+    <div class="tip-card soft">
+      <div class="tip-icon">🧂</div>
+      <div class="tip-title">Ce qu'on garde / ce qu'on enlève</div>
+      <div class="tip-body">
+      <strong style="color:var(--accent)">Oui :</strong> œufs, fromage, charcuterie maigre, poisson, viande, légumes, yaourt grec nature, amandes/noix, fruits (pomme, poire, banane, agrumes...), un filet de miel occasionnel.<br><br>
+      <strong style="color:var(--warn)">Non :</strong> fruits rouges, confitures, céréales sucrées, viennoiseries, desserts, sodas, barres sucrées.</div>
+    </div>
+
+    <p class="section-title">Journée type</p>
+    <div class="week open">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label">
+          <span class="week-num">BASE</span>
+          <div><div class="week-title">Structure quotidienne salée</div><div class="week-goal">100% adaptée à tes goûts</div></div>
+        </div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div class="meal-grid">
+          <div class="meal-row">
+            <span class="meal-time">07:30<br>PETIT-DEJ</span>
+            <div class="meal-content">
+              <strong>Œufs brouillés (2–3)</strong> + tranche de jambon ou saumon fumé + tomates ou avocat<br>
+              <em>OU</em> Yaourt grec nature (200g) + amandes (15g) + 1 filet de miel (petit, max 1 c.à.c) + 1 pomme à côté<br>
+              <span class="kcal-tag">~400–450 kcal</span>
+            </div>
+          </div>
+          <div class="meal-row">
+            <span class="meal-time">10:00<br>COLLATION</span>
+            <div class="meal-content">
+              <strong>1 fruit</strong> (pomme, poire, banane, orange) + <strong>poignée d'amandes</strong> (15–20g)<br>
+              <span class="kcal-tag">~180 kcal</span>
+            </div>
+          </div>
+          <div class="meal-row">
+            <span class="meal-time">12:30<br>DÉJEUNER</span>
+            <div class="meal-content">
+              <strong>Protéine (150g)</strong> poulet, poisson, œufs ou steak + légumes + féculent modéré (riz, quinoa, patate douce)<br>
+              Assaisonnement : huile d'olive, herbes, épices, ail, citron<br>
+              <span class="kcal-tag">~550 kcal</span>
+            </div>
+          </div>
+          <div class="meal-row">
+            <span class="meal-time">16:00<br>GOÛTER</span>
+            <div class="meal-content">
+              <strong>Yaourt grec nature (150g)</strong> + amandes (10g) <em>— sans fruits rouges, sans sucre ajouté</em><br>
+              <span class="kcal-tag">~180 kcal</span>
+            </div>
+          </div>
+          <div class="meal-row">
+            <span class="meal-time">19:30<br>DÎNER</span>
+            <div class="meal-content">
+              <strong>Repas salé léger</strong> : poisson ou œufs + légumes rôtis ou soupe maison + un peu de fromage<br>
+              <span class="kcal-tag">~450 kcal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label">
+          <span class="week-num">IDÉES</span>
+          <div><div class="week-title">Variantes salées pour varier</div><div class="week-goal">Pour ne jamais se lasser</div></div>
+        </div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div class="meal-grid">
+          <div class="meal-row">
+            <span class="meal-time">PETIT-DEJ</span>
+            <div class="meal-content">
+              Omelette champignons-fromage · Avocat-œuf poché sur pain complet · Fromage blanc salé + concombre + graines · Œufs durs + houmous + crudités
+            </div>
+          </div>
+          <div class="meal-row">
+            <span class="meal-time">DÉJ / DÎNER</span>
+            <div class="meal-content">
+              Poulet-curry léger + riz · Saumon grillé + brocoli + citron · Steak haché + haricots verts · Cabillaud + purée patate douce · Soupe de légumes + œuf mollet · Salade complète (thon, œuf, avocat, tomates)
+            </div>
+          </div>
+          <div class="meal-row">
+            <span class="meal-time">SNACK</span>
+            <div class="meal-content">
+              Œuf dur nature · Bâtonnets de fromage · Yaourt grec + amandes · Fruit entier (pomme, poire, mandarine) · Radis + sel · Olives (portion modérée)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-title">Le miel : comment le doser</p>
+    <div class="tip-card">
+      <div class="tip-icon">🍯</div>
+      <div class="tip-title">1 cuillère à café maximum, pas plus</div>
+      <div class="tip-body">Le miel reste un sucre — utile pour adoucir légèrement un yaourt nature sans tomber dans le "sucré" classique. Une cuillère à café (~20 kcal) dans le yaourt du matin, pas plus d'une fois par jour, et pas systématique.</div>
+    </div>
+    <div class="tip-card soft">
+      <div class="tip-icon">🍎</div>
+      <div class="tip-title">Fruits autorisés (hors fruits rouges)</div>
+      <div class="tip-body">Pomme, poire, banane, orange, clémentine, kiwi, raisin (portion modérée). Ce sont de bonnes sources de fibres et de satiété, à manger entiers plutôt qu'en jus.</div>
+    </div>
+  </div>
+
+  <!-- SPORT -->
+  <div class="panel" id="sport">
+    <p class="section-title">Rythme sur 8 semaines</p>
+    <div class="tip-card">
+      <div class="tip-icon">🎯</div>
+      <div class="tip-title">Cohérent avec ton niveau actuel</div>
+      <div class="tip-body">Tu es déjà modérément actif (3–4x/semaine) — on garde ce rythme mais on structure pour maximiser la perte de gras tout en gardant le muscle.</div>
+    </div>
+
+    <div class="week open">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label"><span class="week-num">SEM 1–4</span><div><div class="week-title">Phase de lancement</div></div></div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div style="margin-top:12px;">
+          <div class="sport-row">
+            <span class="sport-day">LUNDI</span>
+            <div class="sport-desc"><span class="tag tag-force">MUSCU</span> Full body — squat, pompes, rowing, gainage. 3×12. 45 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">MARDI</span>
+            <div class="sport-desc"><span class="tag tag-cardio">CARDIO</span> 30 min marche rapide ou vélo, allure modérée.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">MERCREDI</span>
+            <div class="sport-desc"><span class="tag tag-recup">REPOS</span> Étirements 10–15 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">JEUDI</span>
+            <div class="sport-desc"><span class="tag tag-force">MUSCU</span> Haut du corps — développé, tractions, curl. 3×12. 45 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">VENDREDI</span>
+            <div class="sport-desc"><span class="tag tag-cardio">CARDIO</span> HIIT 20 min (30s effort / 30s récup ×10).</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">SAMEDI</span>
+            <div class="sport-desc"><span class="tag tag-force">MUSCU</span> Bas du corps — fentes, leg press, hip thrust. 45 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">DIMANCHE</span>
+            <div class="sport-desc"><span class="tag tag-recup">REPOS</span> Marche tranquille ou repos complet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label"><span class="week-num">SEM 5–8</span><div><div class="week-title">Phase d'intensification</div></div></div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div style="margin-top:12px;">
+          <div class="sport-row">
+            <span class="sport-day">LUNDI</span>
+            <div class="sport-desc"><span class="tag tag-force">MUSCU</span> Full body, charges +5–10%. 4×10. 50 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">MARDI</span>
+            <div class="sport-desc"><span class="tag tag-cardio">CARDIO</span> 35–40 min course ou vélo zone modérée.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">MERCREDI</span>
+            <div class="sport-desc"><span class="tag tag-recup">ACTIF</span> Vélo calme ou natation 25 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">JEUDI</span>
+            <div class="sport-desc"><span class="tag tag-force">MUSCU</span> Haut du corps + gainage avancé. 4×10.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">VENDREDI</span>
+            <div class="sport-desc"><span class="tag tag-cardio">HIIT</span> 25 min, 12 séries + 10 min vélo.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">SAMEDI</span>
+            <div class="sport-desc"><span class="tag tag-force">MUSCU</span> Bas du corps + circuit métabolique. 50 min.</div>
+          </div>
+          <div class="sport-row">
+            <span class="sport-day">DIMANCHE</span>
+            <div class="sport-desc"><span class="tag tag-recup">REPOS</span> Récupération complète.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-title">Nutrition autour du sport</p>
+    <div class="tip-card">
+      <div class="tip-icon">⏱️</div>
+      <div class="tip-title">Avant l'entraînement</div>
+      <div class="tip-body">1 fruit (banane de préférence) + café noir, ou une poignée d'amandes. Simple et salé-neutre.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🔄</div>
+      <div class="tip-title">Après l'entraînement</div>
+      <div class="tip-body">Œufs ou yaourt grec nature + amandes si ce n'est pas encore l'heure du repas complet. Protéine + un peu de gras, pas besoin de sucre pour récupérer.</div>
+    </div>
+  </div>
+
+  <!-- REGLES -->
+  <div class="panel" id="regles">
+    <p class="section-title">Les règles du programme</p>
+    <div class="tip-card">
+      <div class="tip-icon">🧂</div>
+      <div class="tip-title">Toujours privilégier le salé</div>
+      <div class="tip-body">À chaque repas ou collation, pense d'abord "salé" : œufs, fromage, charcuterie maigre, poisson, légumes, plutôt que céréales sucrées ou pâtisseries.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🚫</div>
+      <div class="tip-title">Fruits rouges — à part</div>
+      <div class="tip-body">Comme demandé, on retire framboises, fraises, myrtilles, mûres du yaourt et des repas. Les fruits classiques (pomme, poire, banane, agrumes) restent au menu.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🍯</div>
+      <div class="tip-title">Miel = exception, pas la règle</div>
+      <div class="tip-body">1 cuillère à café max, pas à chaque repas. C'est une touche, pas un ingrédient de base.</div>
+    </div>
+    <div class="tip-card warn">
+      <div class="tip-icon">🥜</div>
+      <div class="tip-title">Amandes/noix — portion contrôlée</div>
+      <div class="tip-body">15–20g par prise (1 petite poignée). Très caloriques malgré leur côté "sain" — facile d'en abuser sans s'en rendre compte.</div>
+    </div>
+
+    <p class="section-title">Si tu veux remplacer un aliment</p>
+    <div class="swap-grid">
+      <div class="swap-row"><span class="swap-out">Céréales sucrées</span><span class="swap-arrow">→</span><span class="swap-in">Œufs ou yaourt grec nature</span></div>
+      <div class="swap-row"><span class="swap-out">Confiture</span><span class="swap-arrow">→</span><span class="swap-in">Filet de miel (max 1 c.à.c)</span></div>
+      <div class="swap-row"><span class="swap-out">Fruits rouges</span><span class="swap-arrow">→</span><span class="swap-in">Pomme, poire, banane, agrumes</span></div>
+      <div class="swap-row"><span class="swap-out">Barre chocolatée</span><span class="swap-arrow">→</span><span class="swap-in">Amandes + fruit entier</span></div>
+      <div class="swap-row"><span class="swap-out">Soda / jus</span><span class="swap-arrow">→</span><span class="swap-in">Eau citronnée ou infusion</span></div>
+      <div class="swap-row"><span class="swap-out">Yaourt aromatisé</span><span class="swap-arrow">→</span><span class="swap-in">Yaourt grec nature + amandes</span></div>
+    </div>
+  </div>
+
+  <!-- SUIVI -->
+  <div class="panel" id="suivi">
+    <p class="section-title">Progression attendue</p>
+    <div class="tip-card">
+      <div class="tip-icon">📉</div>
+      <div class="tip-title">Objectif : −6 kg en 8 semaines</div>
+      <div class="tip-body">Rythme d'environ <strong style="color:var(--accent)">0.7 à 0.8 kg/semaine</strong>. Les 2 premières semaines incluent souvent une perte d'eau plus rapide (jusqu'à 1.5 kg), puis le rythme se stabilise autour de 0.6–0.7 kg/semaine sur les 6 semaines suivantes.</div>
+    </div>
+
+    <p class="section-title">Comment suivre</p>
+    <div class="check-item"><span class="chk">⚖️</span><div class="chk-text">Pesée — 1x/semaine, même jour, à jeun <em>évite les fluctuations quotidiennes trompeuses</em></div></div>
+    <div class="check-item"><span class="chk">📏</span><div class="chk-text">Tour de taille — toutes les 2 semaines <em>indicateur clé de la perte de graisse</em></div></div>
+    <div class="check-item"><span class="chk">📸</span><div class="chk-text">Photos — S1, S4, S8 <em>même lumière, même pose</em></div></div>
+    <div class="check-item"><span class="chk">💪</span><div class="chk-text">Charges en muscu — pour vérifier que tu gardes ta force <em>signe que le muscle est préservé</em></div></div>
+
+    <p class="section-title">Plateau ou ralentissement</p>
+    <div class="tip-card warn">
+      <div class="tip-icon">🔁</div>
+      <div class="tip-title">Comment réagir</div>
+      <div class="tip-body">1) Vérifie les portions d'amandes/fromage (souvent sous-estimées). 2) Ajoute 15 min de marche/jour. 3) Une semaine sur deux mois avec 200 kcal de plus (jour "refeed") pour relancer si besoin, toujours en version salée (ex : un peu plus de féculents).</div>
+    </div>
+  </div>
+
+  <!-- COURSES -->
+  <div class="panel" id="courses">
+    <p class="section-title">Liste de courses type</p>
+
+    <div class="week open">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label"><span class="week-num">🥚</span><div class="week-title">Protéines & laitages salés</div></div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Œufs <em>2 paquets de 12</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Yaourt grec nature (0% ou entier) <em>1kg — pas aromatisé</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Fromage blanc nature <em>500g</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Jambon blanc ou saumon fumé <em>bien choisi, maigre</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Poulet, poisson blanc, saumon <em>selon les repas</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Fromage type comté / feta <em>en petite quantité</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Bœuf haché maigre ou steak <em>400g</em></div></div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label"><span class="week-num">🍎</span><div class="week-title">Fruits (hors fruits rouges) & oléagineux</div></div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Pommes, poires <em>panier de saison</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Bananes <em>régime de 5–6</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Oranges, clémentines <em>filet</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Amandes nature (non salées, non grillées) <em>250g</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Miel <em>1 petit pot — dose contrôlée</em></div></div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-label"><span class="week-num">🥦</span><div class="week-title">Légumes & féculents</div></div>
+        <span class="week-arrow">▼</span>
+      </div>
+      <div class="week-body">
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Brocoli, haricots verts, courgettes, épinards <em>2kg mélange</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Tomates, concombre, avocat <em>salades</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Riz, quinoa, patate douce <em>féculents de base</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Ail, oignon, herbes fraîches, épices <em>pour relever sans sucre</em></div></div>
+        <div class="check-item"><span class="chk">•</span><div class="chk-text">Huile d'olive, citron <em>assaisonnement de base</em></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function toggleWeek(header) {
+  const week = header.closest('.week');
+  week.classList.toggle('open');
+}
+</script>
+</body>
+</html>
